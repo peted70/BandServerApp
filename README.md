@@ -2,7 +2,8 @@
 Simple proof of concept to get Microsoft Band data into the browser
 
 To begin, run 'npm update' in the same directory as the package.json file 
-the, navigate to the nodeserver folder in a console and enter the command 'node server.js'
+then, 
+navigate to the nodeserver folder in a console and enter the command 'node server.js'
 (This will start a websocket server at ws://localhost:54545 - uses https://github.com/websockets/ws)
 
 Open TestPage.html in a browser
