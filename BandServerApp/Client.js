@@ -1,8 +1,12 @@
 ﻿var socket;
-var element;
+var hrElement,
+    gyroElement,
+    accElement;
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    element = document.getElementById('textOut');
+    hrElement = document.getElementById('hrOut');
+    gyroElement = document.getElementById('gyroOut');
+    accElement = document.getElementById('accOut');
     console.log('about to open socket');
     socket = new WebSocket('ws://localhost:54545');
     console.log('attempted to open socket');
@@ -17,9 +21,34 @@ document.addEventListener("DOMContentLoaded", function (event) {
         console.log('error - ' + err);
     };
     socket.onmessage = function (event) {
-        if (element) {
-            var hrEvent = JSON.parse(event.data);
-            element.innerText = 'Heart Rate Reading - ' + hrEvent.SensorReading.HeartRate;
+        var bandEvent = JSON.parse(event.data);
+        switch (bandEvent.Type) {
+            case 'hr':
+                hrElement.innerText = 'Heart Rate Reading - ' + bandEvent.Args.HeartRate;
+                break;
+            case 'gyro':
+                gyroElement.innerText = 'Gyro Reading - (' +
+                    bandEvent.Args.AccelerationX +
+                    ', ' +
+                    bandEvent.Args.AccelerationY +
+                    ', ' +
+                    bandEvent.Args.AccelerationZ +
+                    ') (' +
+                    bandEvent.Args.AngularVelocityX +
+                    ', ' +
+                    bandEvent.Args.AngularVelocityY +
+                    ', ' +
+                    bandEvent.Args.AngularVelocityZ + ')';
+                break;
+            case 'acc':
+                accElement.innerText = 'Acc Reading - (' +
+                     bandEvent.Args.AccelerationX +
+                     ', ' +
+                     bandEvent.Args.AccelerationY +
+                     ', ' +
+                     bandEvent.Args.AccelerationZ +
+                     ')';
+                break;
         }
         console.log('message - ' + event.data);
     };
