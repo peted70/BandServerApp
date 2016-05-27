@@ -14,3 +14,25 @@ This will connect to the band (currently configured to use Fake Band (https://gi
 <b>Note. the app does not use background processing so minimising it will stop the transmission of data.</b>
 
 ![alt tag](https://raw.github.com/peted70/BandServerApp/master/assets/bandtest.PNG)
+
+The app can be configured to use either a real Microsoft Band device which has been successfully paired to your Windows 10 device or can use the FakeBand project https://github.com/BandOnTheRun/fake-band using the compiler define # define USE_DEVICE. This is implemented like this:
+
+```cs
+        IBandClientManager GetBandClientManager()
+        {
+#if USE_DEVICE
+            return BandClientManager.Instance;
+#else
+            FakeBandClientManager.Configure(new FakeBandClientManagerOptions
+            {
+                Bands = new List<IBandInfo>
+                {
+                    new FakeBandInfo(BandConnectionType.Bluetooth, "Fake Band 1"),
+                }
+            });
+
+            // Use the fake band client manager
+            return FakeBandClientManager.Instance;
+#endif
+        }
+```
