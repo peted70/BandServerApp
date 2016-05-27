@@ -1,4 +1,6 @@
-﻿using FakeBand.Fakes;
+﻿#define USE_DEVICE 
+
+using FakeBand.Fakes;
 using Microsoft.Band;
 using Newtonsoft.Json;
 using System;
@@ -61,8 +63,11 @@ namespace BandServerApp
             await SetupBandAsync();
         }
 
-        private async Task SetupBandAsync()
+        IBandClientManager GetBandClientManager()
         {
+#if USE_DEVICE
+            return BandClientManager.Instance;
+#else
             FakeBandClientManager.Configure(new FakeBandClientManagerOptions
             {
                 Bands = new List<IBandInfo>
@@ -72,7 +77,14 @@ namespace BandServerApp
             });
 
             // Use the fake band client manager
-            IBandClientManager clientManager = FakeBandClientManager.Instance;
+            return FakeBandClientManager.Instance;
+#endif
+        }
+
+        private async Task SetupBandAsync()
+        {
+            // Use the fake band client manager
+            IBandClientManager clientManager = GetBandClientManager();
 
             // --------------------------------------------------
             // set up Band SDK code to start reading HR values..
